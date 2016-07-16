@@ -19,11 +19,13 @@ class ViewController: UIViewController {
         
         player.volume = volume.value
     }
+    
     @IBAction func play(sender: AnyObject) {
         
         player.play()
         
     }
+    
     @IBAction func pause(sender: AnyObject) {
         
         player.pause()
@@ -31,7 +33,10 @@ class ViewController: UIViewController {
     }
     
     @IBAction func scrub(sender: AnyObject) {
+        
+        player.currentTime = NSTimeInterval(scrubSlider.value)
     }
+    
     @IBAction func stop(sender: AnyObject) {
         
         // this will reset the player object
@@ -48,18 +53,28 @@ class ViewController: UIViewController {
         }
     }
     
+    func updateScrubSlider() {
+    
+        scrubSlider.value = Float(player.currentTime)
+    
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         do {
         
         try player = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("jcbach", ofType: "mp3")!))
+            
+            scrubSlider.maximumValue = Float(player.duration)
         
         } catch {
         
         
             // It didn't work!
         }
+        
+        _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(ViewController.updateScrubSlider), userInfo: nil, repeats: true)
         
     }
     
